@@ -1,3 +1,5 @@
 name: iac-for-all
 runtime: nodejs
 description: A minimal AWS TypeScript Pulumi program
+backend:
+  url: file://../../state

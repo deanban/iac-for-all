@@ -1,0 +1,12 @@
+bin/
+node_modules/
+mfa.sh
+
+state/.pulumi/backups/dev/*.json
+state/.pulumi/backups/dev/*.json.attrs
+
+state/.pulumi/history/dev/*.json
+state/.pulumi/history/dev/*.json.attrs
+
+state/.pulumi/stacks/*
+
