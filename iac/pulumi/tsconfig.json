@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "sourceMap": true,
+    "baseUrl": ".",
+    "lib": ["es2018"],
+    "module": "commonjs",
+    "target": "es2018",
+    "outDir": "build",
+    "isolatedModules": false,
+    "composite": false,
+    "experimentalDecorators": true,
+    "incremental": true,
+    "emitDecoratorMetadata": true,
+  },
+  "exclude": ["node_modules"],
+  "include": [
+    "./*.ts"
+  ]
+}
