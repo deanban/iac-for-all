@@ -8,9 +8,8 @@
   "version": "0.0.1",
   "main": "src/index.ts",
   "scripts": {
-    "bootstrap": "npm run setup && npm i",
-    "setup": "export AWS_PROFILE=mfaPersonal && export PULUMI_CONFIG_PASSPHRASE=abc",
-    "preview": "pulumi preview",
+    "bootstrap": "npm i",
+    "preview": "PULUMI_CONFIG_PASSPHRASE=abc pulumi preview",
     "up": "pulumi up",
     "destroy": "pulumi destroy"
   },
