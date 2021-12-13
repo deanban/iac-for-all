@@ -27,6 +27,6 @@
     "@pulumi/kubernetes": "3.12.1",
     "@pulumi/kubernetesx": "0.1.6",
     "@pulumi/pulumi": "3.19.0",
-    "dotenv": "10.0.0"
+    "@pulumi/kubernetes-ingress-nginx": "0.0.1"
   }
 }
