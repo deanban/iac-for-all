@@ -1,0 +1,12 @@
+{
+  "language": "python",
+  "app": "python3 ./main.py",
+  "projectId": "fb847d05-b95b-4e29-aa87-de30a2422203",
+  "terraformProviders": [],
+  "terraformModules": [],
+  "codeMakerOutput": "imports",
+  "context": {
+    "excludeStackIdFromLogicalIds": "true",
+"allowSepCharsInLogicalIds": "true"
+  }
+}
