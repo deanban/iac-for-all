@@ -2,3 +2,7 @@ encryptionsalt: v1:3u0GWWntuRY=:v1:Z4MBIPrhh5md+ta9:iUIulsQDOJkVdExua2Rwse/muDtW
 config:
   aws:profile: personal
   aws:region: us-east-1
+  aws:host1:
+    secure: v1:Dz0hM7hRFtQjWf45:paHlRoClf5mqw/Ic83pgPxeMBO35PD+v9glttvfd2Ag=
+  aws:host2:
+    secure: v1:j8Qbu/oyOJGRrGi/:T2eHo7c7ZP4sC8rNZSOLahuGs+LJ32qhbE5T373zrw==
