@@ -26,6 +26,7 @@
     "@pulumi/eks": "0.36.0",
     "@pulumi/kubernetes": "3.12.1",
     "@pulumi/kubernetesx": "0.1.6",
-    "@pulumi/pulumi": "3.19.0"
+    "@pulumi/pulumi": "3.19.0",
+    "dotenv": "10.0.0"
   }
 }

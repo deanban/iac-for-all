@@ -2,6 +2,7 @@ bin/
 node_modules/
 mfa.sh
 .DS_Store
+.env
 
 state/.pulumi/backups/dev/*.json
 state/.pulumi/backups/dev/*.json.attrs

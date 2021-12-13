@@ -1,6 +1,8 @@
 import * as k8s from '@pulumi/kubernetes';
-
+import * as dotenv from 'dotenv';
 import {nsDevName, cluster} from '../cluster';
+
+dotenv.config();
 
 const appLabels = { app: 'nginx' };
 
@@ -73,7 +75,7 @@ const ingress = new k8s.networking.v1beta1.Ingress(
     spec: {
       rules: [
         {
-          host: "search.altana.ai",
+          host: `${process.env.HOST1}`,
           http: {
             paths: [
               {
@@ -87,7 +89,7 @@ const ingress = new k8s.networking.v1beta1.Ingress(
           }
         },
         {
-          host: "graph.altana.ai",
+          host: `${process.env.HOST2}`,
           http: {
             paths: [
               {
