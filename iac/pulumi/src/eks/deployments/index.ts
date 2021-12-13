@@ -76,7 +76,7 @@ const ingress = new k8s.networking.v1beta1.Ingress(
               {
                 path: "/",
                 backend: {
-                  serviceName: "search",
+                  serviceName: service.metadata.name,
                   servicePort: 80
                 }
               }
@@ -88,9 +88,9 @@ const ingress = new k8s.networking.v1beta1.Ingress(
           http: {
             paths: [
               {
-                path: "/",
+                path: "/graph",
                 backend: {
-                  serviceName: "graph",
+                  serviceName: service.metadata.name,
                   servicePort: 80
                 }
               }
