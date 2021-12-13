@@ -22,10 +22,10 @@
     "@commitlint/config-conventional": "15.0.0"
   },
   "dependencies": {
-    "@pulumi/aws": "4.31.0",
+    "@pulumi/aws": "4.32.0",
     "@pulumi/awsx": "0.32.0",
     "@pulumi/eks": "0.36.0",
-    "@pulumi/kubernetes": "3.12.0",
+    "@pulumi/kubernetes": "3.12.1",
     "@pulumi/kubernetesx": "0.1.6",
     "@pulumi/pulumi": "3.19.0"
   }
