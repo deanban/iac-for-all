@@ -9,8 +9,8 @@ import {
   prodRole,
   nsDev,
   nsProd,
-  deployment1,
-  ingressSvc,
+  appStatus,
+  ctrlStatus,
   ingressAddr,
   ingressHost
 } from './eks';
@@ -35,7 +35,7 @@ export const caRoleName = caRole;
 export const atmRoleName = amRole;
 export const prdRoleName = prodRole;
 
-export const deployment = deployment1;
-export const nginxSvcStatus = ingressSvc;
+export const appStatuses = appStatus;
+export const ctrlStatuses = ctrlStatus;
 export const nginxSvcAddr = ingressAddr;
 export const nginxSvcHost = ingressHost;
