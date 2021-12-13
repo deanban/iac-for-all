@@ -10,10 +10,12 @@ import * as pulumi from '@pulumi/pulumi';
 
 import { vpcId, subnetIds, sg, providerOpts } from '../../vpc';
 
+// Get account ID
 const accountId = pulumi.output(
   aws.getCallerIdentity({ async: true, ...providerOpts })
 ).accountId;
 
+//  Assume role for Role Based Access Control
 const assumeRolePolicy = accountId.apply((id) =>
   JSON.stringify({
     Version: '2012-10-17',
@@ -30,7 +32,7 @@ const assumeRolePolicy = accountId.apply((id) =>
   })
 );
 
-// Administrator AWS IAM clusterAdminRole with full access to all AWS resources
+// AWS IAM clusterAdminRole with full access to all AWS resources
 export const clusterAdminRole = new aws.iam.Role(
   `AdminRole`,
   {
@@ -42,6 +44,7 @@ export const clusterAdminRole = new aws.iam.Role(
   { ...providerOpts }
 );
 
+// Automation role for EKS cluster to connect with github actions, gitlab CI, etc.
 export const automationRole = new aws.iam.Role(
   `AutomationRole`,
   {
@@ -53,6 +56,7 @@ export const automationRole = new aws.iam.Role(
   { ...providerOpts }
 );
 
+// Role for any Production users.
 export const prodEnvRole = new aws.iam.Role(
   `ProdEnvRole`,
   {
@@ -83,7 +87,6 @@ const automationProfile = new aws.iam.InstanceProfile(
 );
 
 // Create an EKS cluster inside of the VPC.
-
 const kubeconfigOpts: eks.KubeconfigOptions = { profileName: 'mfaPersonal' };
 
 export const cluster = new eks.Cluster(
@@ -132,6 +135,7 @@ const fixedNodeGroup = cluster.createNodeGroup('dev-cluster-fixed-ng', {
 /** Create a node group for spot compute, if needed.
  * *************************************************
  * I'm not going to use this for now, but it's here for reference.
+ * I'm not sure if spot instances are still supported in EKS.
 
 const spotNodeGroup = new eks.NodeGroup(
   'dev-cluster-spot-ng',
@@ -160,12 +164,14 @@ const spotNodeGroup = new eks.NodeGroup(
 );
 */
 
+// Create Dev Namespace
 const nsDev = new k8s.core.v1.Namespace(
   'dev',
   { metadata: { name: 'dev' } },
   { provider: cluster.provider }
 );
 
+// Create Prod Namespace
 const nsProd = new k8s.core.v1.Namespace(
   'prod',
   { metadata: { name: 'prod' } },
@@ -308,5 +314,6 @@ export const clusterName = cluster.eksCluster.name;
 export const fixedNG = fixedNodeGroup;
 // export const spotNG = spotNodeGroup;
 
+//export namespaces
 export const nsDevName = nsDev.metadata.apply((m) => m.name);
 export const nsProdName = nsProd.metadata.apply((m) => m.name);

@@ -1,9 +1,10 @@
 import * as k8s from '@pulumi/kubernetes';
 
-import {nsDevName, nsProdName, cluster} from '../cluster';
+import {nsDevName, cluster} from '../cluster';
 
 const appLabels = { app: 'nginx' };
 
+// Create lb service
 const service = new k8s.core.v1.Service(
   `${appLabels.app}-service`,
   {
@@ -27,6 +28,7 @@ const service = new k8s.core.v1.Service(
   { provider: cluster.provider }
 );
 
+// Create bare nginx deployment
 const deployment = new k8s.apps.v1.Deployment('nginx', {
   spec: {
     selector: { matchLabels: appLabels },
@@ -59,6 +61,7 @@ const nginx = new k8s.helm.v2.Chart(
   { providers: { kubernetes: cluster.provider } }
 );
 
+// Create nginx ingress
 const ingress = new k8s.networking.v1beta1.Ingress(
   `nginx-ingress`,
   {
@@ -103,6 +106,7 @@ const ingress = new k8s.networking.v1beta1.Ingress(
   { provider: cluster.provider }
 );
 
+// exprt the deployment and ingress
 export const ingressService = service.status
 export const ingressHostname = ingress.status.loadBalancer.ingress[0].hostname;
 export const ingressAddress = ingress.status.loadBalancer.ingress[0].ip;
