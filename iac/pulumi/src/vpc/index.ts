@@ -9,9 +9,11 @@ import * as pulumi from '@pulumi/pulumi';
 import * as aws from '@pulumi/aws';
 
 const config = new pulumi.Config('aws');
+
 export const providerOpts = {
   provider: new aws.Provider('devProvider', {
     region: <aws.Region>config.require('region'),
+    profile: <string>config.require('profile'),
   }),
 };
 
@@ -24,38 +26,47 @@ const vpc = new aws.ec2.Vpc(
     tags: {
       name: 'vpcForAll',
       environment: 'dev',
-    }
+    },
   },
-  providerOpts
+  { ...providerOpts }
 );
 
-export const sg = new aws.ec2.SecurityGroup('sgAllowTLS', {
-  description: 'Allow TLS inbound traffic',
-  vpcId: vpc.id,
-  ingress: [
-    {
-      description: 'TLS from VPC',
-      fromPort: 443,
-      toPort: 443,
-      protocol: 'tcp',
-    },
-  ],
-  egress: [
-    {
-      fromPort: 0,
-      toPort: 0,
-      protocol: '-1',
-      cidrBlocks: ['0.0.0.0/0'],
-      ipv6CidrBlocks: ['::/0'],
-    },
-  ],
-  tags: {
-    name: 'sgAllowTLS',
+export const sg = new aws.ec2.SecurityGroup(
+  'sgAllowHTTP',
+  {
+    description: 'Allow TLS inbound traffic',
     vpcId: vpc.id,
-    environment: 'dev',
+    ingress: [
+      {
+        description: 'Allow pods to communicate with the cluster API Server.',
+        fromPort: 443,
+        toPort: 443,
+        protocol: 'tcp',
+      },
+      {
+        description: 'Allow internet access to pods',
+        fromPort: 80,
+        toPort: 80,
+        protocol: 'tcp',
+      },
+    ],
+    egress: [
+      {
+        fromPort: 0,
+        toPort: 0,
+        protocol: '-1',
+        cidrBlocks: ['0.0.0.0/0'],
+        ipv6CidrBlocks: ['::/0'],
+      },
+    ],
+    tags: {
+      name: 'sgAllowTLS',
+      vpcId: vpc.id,
+      environment: 'dev',
+    },
   },
-}, providerOpts);
-
+  { ...providerOpts }
+);
 
 const igw = new aws.ec2.InternetGateway(
   'internetGatewayForAll',
@@ -65,11 +76,10 @@ const igw = new aws.ec2.InternetGateway(
       name: 'internetGatewayForAll',
       vpcId: vpc.id,
       environment: 'dev',
-    }
+    },
   },
-  providerOpts
+  { ...providerOpts }
 );
-
 
 const routeTable = new aws.ec2.RouteTable(
   'routeTableForAll',
@@ -85,9 +95,9 @@ const routeTable = new aws.ec2.RouteTable(
       name: 'routeTableForAll',
       vpcId: vpc.id,
       environment: 'dev',
-    }
+    },
   },
-  providerOpts
+  { ...providerOpts }
 );
 
 const subnet0 = new aws.ec2.Subnet(
@@ -102,9 +112,9 @@ const subnet0 = new aws.ec2.Subnet(
       name: 'subnet0ForAll',
       vpcId: vpc.id,
       environment: 'dev',
-    }
+    },
   },
-  providerOpts
+  { ...providerOpts }
 );
 
 const subnet1 = new aws.ec2.Subnet(
@@ -121,7 +131,7 @@ const subnet1 = new aws.ec2.Subnet(
       environment: 'dev',
     },
   },
-  providerOpts
+  { ...providerOpts }
 );
 
 const subnet2 = new aws.ec2.Subnet(
@@ -138,16 +148,16 @@ const subnet2 = new aws.ec2.Subnet(
       environment: 'dev',
     },
   },
-  providerOpts
+  { ...providerOpts }
 );
 
 const routeTableAssociation0 = new aws.ec2.RouteTableAssociation(
   'routeTableAssociation0ForAll',
   {
     subnetId: subnet0.id,
-    routeTableId: routeTable.id
+    routeTableId: routeTable.id,
   },
-  providerOpts
+  { ...providerOpts }
 );
 
 const routeTableAssociation1 = new aws.ec2.RouteTableAssociation(
@@ -156,7 +166,7 @@ const routeTableAssociation1 = new aws.ec2.RouteTableAssociation(
     subnetId: subnet1.id,
     routeTableId: routeTable.id,
   },
-  providerOpts
+  { ...providerOpts }
 );
 
 const routeTableAssociation2 = new aws.ec2.RouteTableAssociation(
@@ -165,7 +175,7 @@ const routeTableAssociation2 = new aws.ec2.RouteTableAssociation(
     subnetId: subnet2.id,
     routeTableId: routeTable.id,
   },
-  providerOpts
+  { ...providerOpts }
 );
 
 const alb = new aws.lb.LoadBalancer(
@@ -181,8 +191,25 @@ const alb = new aws.lb.LoadBalancer(
     },
     securityGroups: [sg.id],
   },
-  providerOpts
+  { ...providerOpts }
 );
+
+const targetGroup = new aws.lb.TargetGroup('alb-target-group', {
+  port: 80,
+  protocol: 'HTTP',
+  targetType: 'ip',
+  vpcId: vpc.id,
+}, { ...providerOpts });
+
+const listener = new aws.lb.Listener(
+  'alb-listener',
+  {
+    loadBalancerArn: alb.arn,
+    port: 80,
+    defaultActions: [{type: 'forward', targetGroupArn: targetGroup.arn}],
+  },
+  { ...providerOpts }
+)
 
 
 const natGateway0 = new aws.ec2.NatGateway(
@@ -196,7 +223,7 @@ const natGateway0 = new aws.ec2.NatGateway(
       environment: 'dev',
     },
   },
-  providerOpts
+  { ...providerOpts }
 );
 
 const natGateway1 = new aws.ec2.NatGateway(
@@ -210,7 +237,7 @@ const natGateway1 = new aws.ec2.NatGateway(
       environment: 'dev',
     },
   },
-  providerOpts
+  { ...providerOpts }
 );
 
 const natGateway2 = new aws.ec2.NatGateway(
@@ -224,13 +251,20 @@ const natGateway2 = new aws.ec2.NatGateway(
       environment: 'dev',
     },
   },
-  providerOpts
+  { ...providerOpts }
 );
 
 export const vpcId = vpc.id;
 export const subnetIds = [subnet0.id, subnet1.id, subnet2.id];
 export const sgId = sg.id;
 export const albId = alb.id;
+export const url = alb.dnsName;
+export const targetGroupId = targetGroup.id;
+export const listenerId = listener.id;
 export const igwId = igw.id;
-export const rtaIds = [routeTableAssociation0.id, routeTableAssociation1.id, routeTableAssociation2.id];
+export const rtaIds = [
+  routeTableAssociation0.id,
+  routeTableAssociation1.id,
+  routeTableAssociation2.id,
+];
 export const ngwIds = [natGateway0.id, natGateway1.id, natGateway2.id];
